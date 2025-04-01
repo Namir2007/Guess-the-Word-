@@ -1,17 +1,16 @@
-
-
 const express = require("express");
 const cors = require("cors");
+
 const app = express();
 const port = 3000;
 
 app.use(cors());
+app.use(express.json()); // Ispravljeno!
 
 let words = [
   "APPLE",
   "TIGER",
   "HOUSE",
-  "CAR",
   "DOG",
   "SUN",
   "SMALL",
@@ -19,47 +18,29 @@ let words = [
   "CODING",
   "HAPPY",
 ];
+let currentWord = "";
 
 app.get("/word", (req, res) => {
-  const randomIndex = Math.floor(Math.random() * words.length);
-  const randomWord = words[randomIndex];
-  res.json({ hidden: generateRandomWord(randomWord) });
+  currentWord = words[Math.floor(Math.random() * words.length)];
+  res.json({
+    hidden: "_".repeat(currentWord.length),
+    wordLength: currentWord.length,
+    original: currentWord,
+  });
 });
-
-function generateRandomWord(word) {
-  return "_".repeat(word.length);
-}
 
 app.post("/check", (req, res) => {
   const { letter, hidden, original } = req.body;
-  if (!letter || !hidden || !original) {
-    return "invalid!!!!";
-  }
-  const pos = [];
+  if (!letter || !hidden || !original)
+    return res.status(400).json({ error: "Invalid request" });
+
+  let positions = [];
   for (let i = 0; i < original.length; i++) {
-    if (original[i] === letter) {
-      pos.push(i);
-      return i;
-    } else {
-      return [];
-    }
+    if (original[i].toUpperCase() === letter.toUpperCase()) positions.push(i);
   }
-  res.json({ pos });
+  res.json({ positions });
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
-
-async function getWords() {
-  try {
-    const response = await fetch("http://localhost:3000/word");
-    const data = await response.json();
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-
-getWords();
+app.listen(port, () =>
+  console.log(`Server running at http://localhost:${port}`)
+);
