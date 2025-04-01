@@ -54,9 +54,9 @@ guessBtn.addEventListener("click", async () => {
 
 function checkGameOver() {
   if (!hiddenWord.includes("_")) {
-    messageDiv.innerText = "You won! 🎉";
+    messageDiv.innerText = "You won!";
   } else if (attempts === 0) {
-    messageDiv.innerText = `Game Over! The word was ${originalWord}. 😢`;
+    messageDiv.innerText = `Game Over! The word was ${originalWord}.`;
   }
 }
 
